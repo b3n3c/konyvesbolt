@@ -62,7 +62,7 @@ include(__DIR__ . '/components/head.php');
                     else
                         print "<td>Kézbesítés alatt</td>\n";
                     print "<td><ul>";
-                    $resze = oci_parse ($conn, 'SELECT KONYV.CIM, RESZE.DARAB FROM RESZE, KONYV WHERE RENDELES_ID = :value AND RESZE.ISBN=KONYV.ISBN');
+                    $resze = oci_parse ($conn, 'SELECT KONYV.CIM, RESZE.DARAB FROM RESZE, KONYV WHERE RENDELES_ID = :value AND RESZE.ISBN=KONYV.ISBN ORDER BY RENDELES.DATUM desc');
                     oci_bind_by_name($resze, ':value', $rendeles_id);
                     oci_execute($resze, OCI_DEFAULT);
                     while (oci_fetch($resze)){

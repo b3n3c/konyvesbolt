@@ -182,6 +182,9 @@ include(__DIR__ . '/components/header.php');
             </select>
             <br /><br /><br />
             <input type="submit" value="Frissites" />
+            <?php if (isset($_GET["success1"]) && $_GET["success1"] == "1") { ?>
+                <span id="success" class='ok'>A könyv sikeresen frissitve!</span>
+            <?php } ?>
         </fieldset>
     </form>
 
@@ -206,12 +209,15 @@ include(__DIR__ . '/components/header.php');
         <form method="post" action="backend/newOffer.php">
             <fieldset>
                 <legend>Könyv rendelése:</legend>
-
+                <input type="hidden" id="custId" name="isbn" value="<?php echo $k_isbn ?>">
                 <input type="hidden" id="custId" name="ar" value="<?php echo $k_ar ?>">
                 <input type="hidden" id="custId" name="userId" value="<?php echo $userId ?>">
 
                 <br /><br /><br />
                 <input type="submit" value="Egy könyv rendelése" />
+                <?php if (isset($_GET["success"]) && $_GET["success"] == "1") { ?>
+                    <span id="success" class='ok'>A könyv sikeresen megrendelve!</span>
+                <?php } ?>
             </fieldset>
         </form>
 

@@ -18,7 +18,7 @@ VALUES ('$cim', '$ISBN', '$mufaj', '$tipus', $ev, $ar, $db, $kiadoid)");
 $result = oci_execute($query, OCI_DEFAULT);
 if ($result) {
     oci_commit($conn);
-    echo "Sikeres hozzáadás!";
+    header("Location: ../ujKonyv.php?success=$result#success");
     exit();
 }
 else{

@@ -19,7 +19,7 @@ $query = oci_parse($conn, "UPDATE KONYV SET CIM = '$cim', MUFAJ = '$mufaj',
 $result = oci_execute($query, OCI_DEFAULT);
 if ($result) {
     oci_commit($conn);
-    echo "Sikeresen frissitve !";
+    header("Location: ../reszletek.php?isbn=$ISBN"."&success1=$result#success1");
     exit();
 }
 else{

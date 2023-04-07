@@ -8,7 +8,6 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
     header('Location: bejelentkezés.php');
     exit();
 }
-
 if (isset($_POST["quantity"])){
     $_SESSION["cart"][$_POST["isbn"]] = $_POST["quantity"];
 }
@@ -35,7 +34,6 @@ include(__DIR__ . '/components/header.php');
             print "<span id='success' class='ok'>A megrendelés sikeresen elküldve!</span><br>";
         }
         if(isset($_SESSION["cart"]) && !empty($_SESSION["cart"])){
-            print "<form action='backend/newOffer.php' method='post'>";
             print "<table>";
             print "<thead>";
             print "<th>Könyv címe</th>";
@@ -63,6 +61,7 @@ include(__DIR__ . '/components/header.php');
             print "</tbody>";
             print "</table>";
             print "</br>";
+            print "<form action='backend/newOffer.php' method='post'>";
             print "<input type='hidden' name='ar' value='{$vegosszeg}'>";
             print "<input type='submit' name=newOffer' value='Kiválasztott könyvek megrendelése'>";
             print "</form>";

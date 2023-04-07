@@ -6,6 +6,16 @@ session_start();
 
 require(__DIR__ . '/backend/conn.php');
 
+if(isset($_POST["addToCart"]) && $_POST["quantity"] > 0){
+    print_r($_SESSION["cart"]);
+    if(isset($_SESSION["cart"][$_POST["isbn"]])){
+        $_SESSION["cart"][$_POST["isbn"]] += $_POST["quantity"];
+    }else{
+        $_SESSION["cart"][$_POST["isbn"]] = $_POST["quantity"];
+    }
+    header("Location: reszletek.php?isbn={$_POST["isbn"]}"."&success=1#success");
+}
+
 $conn = oci_connect('system', 'oracle', 'localhost/XE');
 
 $konyv = oci_parse ($conn, 'SELECT * FROM KONYV WHERE ISBN = :value');
@@ -98,7 +108,7 @@ include(__DIR__ . '/components/header.php');
 
     <?php
 
-    if ($_SESSION['admin']) {
+    if ($_SESSION["admin"]) {
 
         $konyv = oci_parse ($conn, 'SELECT * FROM KONYV WHERE ISBN = :value');
         oci_bind_by_name($konyv, ':value', $_GET['isbn']);
@@ -206,32 +216,25 @@ include(__DIR__ . '/components/header.php');
 
         ?>
 
-        <form method="post" action="backend/newOffer.php">
+        <form method="post" action="">
             <fieldset>
                 <legend>Könyv rendelése:</legend>
-                <input type="hidden" id="custId" name="isbn" value="<?php echo $k_isbn ?>">
-                <input type="hidden" id="custId" name="ar" value="<?php echo $k_ar ?>">
-                <input type="hidden" id="custId" name="userId" value="<?php echo $userId ?>">
+                <input type="hidden" id="custId" name="isbn" value="<?php echo $_GET["isbn"] ?>">
+<!--                <input type="hidden" id="custId" name="ar" value="--><?php //echo $k_ar ?><!--">-->
+<!--                <input type="hidden" id="custId" name="userId" value="--><?php //echo $userId ?><!--">-->
 
                 <br /><br /><br />
-                <input type="submit" value="Egy könyv rendelése" />
+                <label for="quantity">Mennyiség: </label>
+                <input type="number" value="1" id="quantity" name="quantity" min="1">
+                <input type="submit" value="Kosárhoz adás" name="addToCart"/>
                 <?php if (isset($_GET["success"]) && $_GET["success"] == "1") { ?>
-                    <span id="success" class='ok'>A könyv sikeresen megrendelve!</span>
+                    <span id="success" class='ok'>A könyv sikeresen hozzáadva a kosárhoz!</span>
                 <?php } ?>
             </fieldset>
         </form>
 
-
-
-
-
-
-
 </main>
 <?php include(__DIR__ . '/components/footer.php'); ?>
-
-<script src="js/jquery-3.6.3.min.js"></script>
-<script src="js/rating.js"></script>
 
 </body>
 

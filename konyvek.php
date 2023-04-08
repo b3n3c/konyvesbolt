@@ -1,11 +1,9 @@
 <?php
 include(__DIR__ . '/backend/validator.php');
-include(__DIR__ . '/backend/conn.php');
+include(__DIR__ . '/backend/dbhelper.php');
 
 session_start();
-
-require(__DIR__ . '/backend/conn.php');
-
+$conn = getDb();
 $stid = oci_parse ($conn, 'SELECT * FROM KONYV');
 if (!$stid) {
     $e = oci_error($conn);

@@ -92,22 +92,43 @@ include(__DIR__ . '/components/head.php');
 
             <label for="db">Hány darab van raktáron?</label>
             <input type="number"  min="0" required id="db" name="db">
-            <br />
+            <br /><br />
+            <fieldset>
+                <legend>Kiadó</legend>
+                <label for="kiado">Új kiadó hozzáadása</label>
+                <input type="checkbox" id="kiado" name="kiado" value="ujkiado">
+                <br /><br />
+                <label for="kiadoid" id="kiadoid-label">Válassz egy kiadót: </label>
+                <select name="kiadoid" id="kiadoid">
+                    <option selected="selected"> </option>
+                    <?php
+                    foreach($kiadok as $kiado){
+                        echo "<option value='$kiado[0]'>$kiado[1]</option>";
+                    }
+                    ?>
+                </select>
+                <br>
+                <label for="uj-kiado" class="disabled" id="uj-kiado-label">Új kiadó neve:</label>
+                <input required id="uj-kiado" maxlength="100" type="text" name="uj-kiado" disabled>
+                <label for="uj-kiado-orszag" class="disabled" id="uj-kiado-orszag-label">Ország:</label>
+                <input required id="uj-kiado-orszag" maxlength="100" type="text" name="uj-kiado-orszag" disabled>
 
-            <select name="kiadoid">
-                <option selected="selected">Válassz egy kiadót:</option>
-                <?php
-                foreach($kiadok as $kiado){
-                    echo "<option value='$kiado[0]'>$kiado[1]</option>";
-                }
-                ?>
-            </select>
+            </fieldset>
+            <br /><br />
+            <fieldset>
+                <legend>Szerző(k)</legend>
+                <div id="szerzok">
+                    <div id="szerzo1">
+                        <label for="vez-nev-1">Vezetéknév:</label>
+                        <input required id="vez-nev-1" maxlength="49" type="text" name="vez-nev-1">
+                        <label for="ker-nev-1">Keresztnév:</label>
+                        <input required id="ker-nev-1" maxlength="49" type="text" name="ker-nev-1">
+                    </div>
+                </div>
+                <button type="button" name="add" id="add">Új szerző hozzáadása</button>
+            </fieldset>
 
             <br /><br /><br />
-
-
-
-
 
             <input type="submit" value="Hozzáadás" />
             <input type="reset" value="Vissza mindent" />
@@ -118,15 +139,45 @@ include(__DIR__ . '/components/head.php');
     </form>
     </main>
 
-
-
-
-
-
-
     <?php include(__DIR__ . "/components/footer.php"); ?>
 </body>
 
 </html>
+
+<script>
+    jQuery(document).ready(function($){
+        var i=1;
+        $('#add').click(function(){
+            i++;
+            $('#szerzok').append('<div id=szerzo'+i+'><button type="button" name="remove" class="remove" id='+i+'>X</button><hr/><label for="vez-nev-'+i+'">Vezetéknév:</label><input required id="vez-nev-'+i+'" maxlength="49" type="text" name="vez-nev-'+i+'"> <label for="ker-nev-'+i+'">Keresztnév:</label> <input required id="ker-nev-'+i+'" maxlength="49" type="text" name="ker-nev-'+i+'"></div>');
+        });
+        $(document).on('click', '.remove', function(){
+            var button_id = $(this).attr("id");
+            $('#pizza'+button_id).remove();
+        });
+        $(document).on('click', '.remove', function(){
+            var button_id = $(this).attr("id");
+            $('#szerzo'+button_id).remove();
+        });
+    });
+
+    $('#kiado').click(function() {
+        if ($(this).is(':checked')) {
+            $("#kiadoid").prop('disabled', true);
+            $("#kiadoid-label").addClass("disabled");
+            $("#uj-kiado").prop("disabled", false);
+            $("#uj-kiado-label").removeClass("disabled");
+            $("#uj-kiado-orszag").prop("disabled", false);
+            $("#uj-kiado-orszag-label").removeClass("disabled");
+        }else{
+            $("#kiadoid").prop('disabled', false);
+            $("#kiadoid-label").removeClass("disabled");
+            $("#uj-kiado").prop("disabled", true);
+            $("#uj-kiado-label").addClass("disabled");
+            $("#uj-kiado-orszag").prop("disabled", true);
+            $("#uj-kiado-orszag-label").addClass("disabled");
+        }
+    });
+</script>
 
 

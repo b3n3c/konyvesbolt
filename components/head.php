@@ -18,6 +18,7 @@ if (isset($TITLE_SUFFIX) && !empty($TITLE_SUFFIX)) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/table.css">
     <link rel="icon" type="image/x-icon" href="img/logo/logo.png">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
     <?php if (isset($CSS) && count($CSS) > 0) {
         foreach ($CSS as $css) {
             echo "<link rel=\"stylesheet\" href=\"" . $css . "\">\n";

@@ -191,12 +191,19 @@ fieldset {
 article {
   margin: 20px 0;
 }
+#szerzok {
+  padding: 0;
+  margin: 0;
+  border: none;
+}
 
 div {
   padding: 10px;
   margin: 20px 0;
   border: 1px solid #ccc;
 }
+
+
 
 ol {
   list-style-type: decimal;
@@ -270,6 +277,8 @@ hr {
 
 .card {
   display: grid;
+  margin-left: 10px;
+  margin-right: 10px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
   align-items: center;
   cursor: pointer;
@@ -281,6 +290,10 @@ hr {
 .card:hover {
   transform: scale(1.02);
   box-shadow: 0 0 14px rgba(0, 0, 0, 0.3);
+}
+
+.disabled {
+  color: #888888;
 }
 
 @media screen and (min-width: 550px) {

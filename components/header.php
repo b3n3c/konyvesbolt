@@ -6,6 +6,7 @@ if (!isset($_SESSION))
 $_pages = [
     "Kezdőlap" => "index.php",
     "Könyvek" => "konyvek.php",
+    "Keresés" => "search.php",
 ];
 
 if (isset($_SESSION["id"]) && !empty($_SESSION["id"])) {

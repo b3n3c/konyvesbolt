@@ -13,7 +13,7 @@ if(isset($_POST["addToCart"]) && $_POST["quantity"] > 0){
     }
     header("Location: reszletek.php?isbn={$_POST["isbn"]}"."&success=1#success");
 }
-
+error_reporting(0);
 $conn = getDb();
 
 $konyv = getBookByISBN($_GET["isbn"]);
@@ -165,6 +165,9 @@ include(__DIR__ . '/components/header.php');
 
         ?>
 
+    <?php
+    if (isset($_SESSION['id'])) {
+        ?>
         <form method="post" action="">
             <fieldset>
                 <legend>Könyv rendelése:</legend>
@@ -178,6 +181,15 @@ include(__DIR__ . '/components/header.php');
                 <?php } ?>
             </fieldset>
         </form>
+        <?php
+    } else {
+        ?>
+        <p>Könyv rendeléséhez kérjük, jelentkezzen be!</p>
+        <a href="bejelentkezes.php">Bejelentkezés</a>
+        <?php
+    }
+    ?>
+
 
     <?php
     $i = 0;

@@ -14,6 +14,7 @@ if (isset($_SESSION["id"]) && !empty($_SESSION["id"])) {
     if (isset($_SESSION["admin"]) && !empty($_SESSION["admin"])) {
         $_pages["Rendelések"] = urlencode("rendelesek.php");
         $_pages["Új könyv hozzáadása"] = urlencode("ujKonyv.php");
+        $_pages["Felhasználók"] = urlencode("UserSearch.php");
     }
     $_pages["Kosár"] = "kosar.php";
     $_pages["Kijelentkezés"] = "backend/logout.php";

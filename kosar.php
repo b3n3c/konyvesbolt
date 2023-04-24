@@ -2,6 +2,8 @@
 include(__DIR__ . '/backend/validator.php');
 include(__DIR__ . '/backend/dbhelper.php');
 
+class NegativeQuantityException extends Exception {};
+
 session_start();
 
 if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
@@ -9,7 +11,14 @@ if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
     exit();
 }
 if (isset($_POST["quantity"])){
-    $_SESSION["cart"][$_POST["isbn"]] = $_POST["quantity"];
+    try {
+        if ($_POST["quantity"] <= 0) {
+            throw new NegativeQuantityException("EZ a könyv sajnos elfogyott, válassz másikat!");
+        }
+        $_SESSION["cart"][$_POST["isbn"]] = $_POST["quantity"];
+    } catch (NegativeQuantityException $e) {
+        echo "Hiba: " . $e->getMessage();
+    }
 }
 if(isset($_POST["remove"])){
     unset($_SESSION["cart"][$_POST["isbn"]]);

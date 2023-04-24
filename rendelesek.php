@@ -48,7 +48,8 @@ include(__DIR__ . '/components/head.php');
         <table>
             <thead>
                 <tr>
-                    <th>Dátum</th>
+                    <th>Felhasználó_ID</th>
+                    <th>Rendelés Dátuma</th>
                     <th>Állapot</th>
                     <th>Rendelt termékek</th>
                     <th>Végösszeg</th>
@@ -59,6 +60,7 @@ include(__DIR__ . '/components/head.php');
                 while (oci_fetch($rendeles)){
                     $rendeles_id = oci_result($rendeles, "RENDELES_ID");
                     print "<tr>\n";
+                    print "<td>" . oci_result($rendeles,"FELHASZNALO_ID") . "</td>";
                     print "<td>" . oci_result($rendeles, "DATUM") . "</td>\n";
                     print "<td> <form method='post' action='backend/update.php'>";
                     print "<input type='hidden' name='rendeles_id' value='" . oci_result($rendeles,"RENDELES_ID") . "'/>";

@@ -85,10 +85,26 @@ include(__DIR__.'/components/header.php');
             print "</div></a>\n";
             $i++;
         }
-
-        oci_free_statement ($stid);
-        oci_close($conn);
         ?>
+        <br>
+        <h2>A legnagyobb könyvmolyok:</h2>
+        <ol>
+        <?php
+        $sql = "SELECT felhasznalo.vezeteknev, 
+                       felhasznalo.keresztnev, 
+                       COUNT(*) AS rendelesek FROM felhasznalo, rendeles  
+                                              WHERE felhasznalo.felhasznalo_id = rendeles.felhasznalo_id 
+                                              group by felhasznalo.email, felhasznalo.vezeteknev, felhasznalo.keresztnev
+                                              HAVING COUNT(*) >= (SELECT szamlalo FROM (SELECT COUNT(*) AS szamlalo, row_number() over (order by COUNT(*) desc) as row_num FROM rendeles GROUP BY rendeles.felhasznalo_id) WHERE row_num = 3)";
+
+
+        $stmt = oci_parse($conn, $sql);
+        oci_execute($stmt);
+        while (($row = oci_fetch_array($stmt, OCI_ASSOC))) {
+            print "<li>{$row['VEZETEKNEV']} {$row['KERESZTNEV']} - {$row['RENDELESEK']} rendelés</li>";
+        }
+        ?>
+        </ol>
     </section>
 </main>
 <?php include(__DIR__.'/components/footer.php'); ?>

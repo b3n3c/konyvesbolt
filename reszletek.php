@@ -34,6 +34,18 @@ $mas_konyvek = oci_parse($conn, "SELECT RESZE.ISBN, KONYV.CIM FROM RESZE, KONYV 
 SELECT RENDELES_ID FROM RESZE WHERE ISBN = :value GROUP BY RENDELES_ID) AND RESZE.ISBN != :value AND RESZE.ISBN=KONYV.ISBN");
 oci_bind_by_name($mas_konyvek, ':value', $_GET['isbn']);
 oci_execute($mas_konyvek, OCI_DEFAULT);
+
+
+$legjobb_a_mufajban = oci_parse($conn, "SELECT konyv.cim, resze.ISBN, SUM(resze.darab) AS peldany FROM konyv, resze WHERE
+                                                                                konyv.isbn = resze.isbn AND konyv.mufaj=:mufaj AND resze.ISBN != :isbn GROUP BY resze.ISBN, konyv.cim ORDER BY SUM(resze.darab) DESC FETCH NEXT 3 ROWS ONLY");
+oci_bind_by_name($legjobb_a_mufajban, ':isbn', $_GET['isbn']);
+oci_bind_by_name($legjobb_a_mufajban, ':mufaj', $k_mufaj);
+oci_execute($legjobb_a_mufajban, OCI_DEFAULT);
+
+$legjobb_a_kiadotol = oci_parse($conn, "SELECT konyv.cim, resze.ISBN, SUM(resze.darab) AS peldany FROM konyv, resze WHERE konyv.isbn = resze.isbn AND konyv.kiado_id=:kiado AND resze.ISBN != :isbn GROUP BY resze.ISBN, konyv.cim ORDER BY SUM(resze.darab) DESC FETCH NEXT 3 ROWS ONLY");
+oci_bind_by_name($legjobb_a_kiadotol, ':isbn', $_GET['isbn']);
+oci_bind_by_name($legjobb_a_kiadotol, ':kiado', $kiado_id);
+oci_execute($legjobb_a_kiadotol, OCI_DEFAULT);
 ?>
 
 <!DOCTYPE html>
@@ -183,14 +195,70 @@ include(__DIR__ . '/components/header.php');
         </form>
 
     <?php
+    //Legnépszerűbb a műfajban
+    $i = 0;
+    while (oci_fetch($legjobb_a_mufajban)) {
+        if($i == 0){
+            print "<br><p>A legnépszerűbb könyvek a műfajban: </p><br>";
+        }
+        $akt_isbn = (int)oci_result($legjobb_a_mufajban, 'ISBN');
+        print "<a href='reszletek.php?isbn={$akt_isbn}'><div class='card'>\n";
+        print "<h1>" . oci_result($legjobb_a_mufajban, 'CIM') . "</h1>\n";
+
+        $szerzok = oci_parse($conn, "SELECT * FROM SZERZO WHERE ISBN = :value");
+        oci_bind_by_name($szerzok, ':value', $akt_isbn);
+        oci_execute($szerzok, OCI_DEFAULT);
+        $k = 1;
+        while (oci_fetch($szerzok)){
+            print "<h2>";
+            if ($k != 1)
+                print ", ";
+            print ($szerzok !== null ? oci_result($szerzok, 'VEZETEKNEV') : "&nbsp;") . " " .
+                ($szerzok !== null ? oci_result($szerzok, 'KERESZTNEV') : "&nbsp;") . "</h2>\n";
+            $k += 1;
+        }
+        print "</div></a>\n";
+        $i += 1;
+    }
+    ?>
+
+    <?php
     $i = 0;
     while (oci_fetch($mas_konyvek)) {
         if($i == 0){
-            print "<p>Akik megvásárolták ezt a könyvet, ezeket is olvasták már: </p><br>";
+            print "<br><p>Akik megvásárolták ezt a könyvet, ezeket is olvasták már: </p><br>";
         }
         $akt_isbn = (int)oci_result($mas_konyvek, 'ISBN');
         print "<a href='reszletek.php?isbn={$akt_isbn}'><div class='card'>\n";
         print "<h1>" . oci_result($mas_konyvek, 'CIM') . "</h1>\n";
+
+        $szerzok = oci_parse($conn, "SELECT * FROM SZERZO WHERE ISBN = :value");
+        oci_bind_by_name($szerzok, ':value', $akt_isbn);
+        oci_execute($szerzok, OCI_DEFAULT);
+        $k = 1;
+        while (oci_fetch($szerzok)){
+            print "<h2>";
+            if ($k != 1)
+                print ", ";
+            print ($szerzok !== null ? oci_result($szerzok, 'VEZETEKNEV') : "&nbsp;") . " " .
+                ($szerzok !== null ? oci_result($szerzok, 'KERESZTNEV') : "&nbsp;") . "</h2>\n";
+            $k += 1;
+        }
+        print "</div></a>\n";
+        $i += 1;
+    }
+    ?>
+
+    <?php
+    //Legnépszerűbb a a kiadótól
+    $i = 0;
+    while (oci_fetch($legjobb_a_kiadotol)) {
+        if($i == 0){
+            print "<br><p>A legnépszerűbb könyvek a kiadótól: </p><br>";
+        }
+        $akt_isbn = (int)oci_result($legjobb_a_kiadotol, 'ISBN');
+        print "<a href='reszletek.php?isbn={$akt_isbn}'><div class='card'>\n";
+        print "<h1>" . oci_result($legjobb_a_kiadotol, 'CIM') . "</h1>\n";
 
         $szerzok = oci_parse($conn, "SELECT * FROM SZERZO WHERE ISBN = :value");
         oci_bind_by_name($szerzok, ':value', $akt_isbn);

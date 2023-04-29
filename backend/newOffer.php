@@ -6,11 +6,12 @@ $now = date("d-M-y");
 $userId = $_SESSION["id"];
 $ar = (int)$_POST['ar'];
 
-$sql = 'BEGIN UjRendeles(:param1, :param2, :param3); END;';
+$sql = 'BEGIN :r := UjRendeles(:param1, :param2, :param3); END;';
 $stmt_id = oci_parse($conn, $sql);
 oci_bind_by_name($stmt_id, ':param1', $userId);
 oci_bind_by_name($stmt_id, ':param2', $now);
 oci_bind_by_name($stmt_id, ':param3', $ar);
+oci_bind_by_name($stmt_id, ':r', $rendeles_id, 200);
 oci_execute($stmt_id);
 oci_commit($conn);
 foreach (array_keys($_SESSION["cart"]) as $isbn){

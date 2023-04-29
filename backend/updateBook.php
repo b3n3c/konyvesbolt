@@ -1,6 +1,6 @@
 <?php
-
-$conn = oci_connect('system', 'oracle', 'localhost/XE');
+include("dbhelper.php");
+$conn = getDb();
 
 $cim = $_POST['cim'];
 $ISBN = $_POST['ISBN'];

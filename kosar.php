@@ -7,7 +7,7 @@ class NegativeQuantityException extends Exception {};
 session_start();
 
 if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
-    header('Location: bejelentkezés.php');
+    header('Location: bejelentkezes.php');
     exit();
 }
 if (isset($_POST["quantity"])){

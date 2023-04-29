@@ -5,7 +5,10 @@ include(__DIR__ . '/backend/dbhelper.php');
 session_start();
 
 if(isset($_POST["addToCart"]) && $_POST["quantity"] > 0){
-    print_r($_SESSION["cart"]);
+    if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
+        header('Location: bejelentkezes.php');
+        exit();
+    }
     if(isset($_SESSION["cart"][$_POST["isbn"]])){
         $_SESSION["cart"][$_POST["isbn"]] += $_POST["quantity"];
     }else{
@@ -57,7 +60,7 @@ include(__DIR__ . '/components/header.php');
 
     <?php
 
-    if ($_SESSION["admin"]) {
+    if (isset($_SESSION["admin"])) {
 
         $konyv = oci_parse ($conn, 'SELECT * FROM KONYV WHERE ISBN = :value');
         oci_bind_by_name($konyv, ':value', $_GET['isbn']);

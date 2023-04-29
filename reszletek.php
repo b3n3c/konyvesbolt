@@ -223,6 +223,56 @@ include(__DIR__ . '/components/header.php');
     ?>
 
     <?php
+    //Legnépszerűbb a szerzőtől
+
+    $szerzok_stmt = oci_parse($conn, "SELECT * FROM SZERZO WHERE ISBN = :value");
+    oci_bind_by_name($szerzok_stmt, ':value', $_GET["isbn"]);
+    oci_execute($szerzok_stmt, OCI_DEFAULT);
+    $i = 0;
+    while (oci_fetch($szerzok_stmt)){
+        $vnev = oci_result($szerzok_stmt, 'VEZETEKNEV');
+        $knev = oci_result($szerzok_stmt, 'KERESZTNEV');
+        $legjobb_a_szerzotol = oci_parse($conn, "SELECT k.cim, k.isbn, SUM(r.darab) AS osszes_darab
+        FROM Konyv k
+        INNER JOIN Resze r ON k.isbn = r.isbn
+        INNER JOIN Szerzo s ON k.isbn = s.isbn
+        WHERE s.vezeteknev = :v_nev AND s.keresztnev = :k_nev AND r.ISBN != :isbn
+        GROUP BY k.cim, k.isbn
+        ORDER BY SUM(r.darab) DESC
+        FETCH FIRST 3 ROWS ONLY");
+        oci_bind_by_name($legjobb_a_szerzotol, ':isbn', $_GET['isbn']);
+        oci_bind_by_name($legjobb_a_szerzotol, ':k_nev', $knev);
+        oci_bind_by_name($legjobb_a_szerzotol, ':v_nev', $vnev);
+        oci_execute($legjobb_a_szerzotol, OCI_DEFAULT);
+
+        while (oci_fetch($legjobb_a_szerzotol)) {
+            if($i == 0){
+                print "<br><p>A legnépszerűbb könyvek a szrző(k)től: </p><br>";
+            }
+            $akt_isbn = (int)oci_result($legjobb_a_szerzotol, 'ISBN');
+            print "<a href='reszletek.php?isbn={$akt_isbn}'><div class='card'>\n";
+            print "<h1>" . oci_result($legjobb_a_szerzotol, 'CIM') . "</h1>\n";
+
+            $szerzok = oci_parse($conn, "SELECT * FROM SZERZO WHERE ISBN = :value");
+            oci_bind_by_name($szerzok, ':value', $akt_isbn);
+            oci_execute($szerzok, OCI_DEFAULT);
+            $k = 1;
+            while (oci_fetch($szerzok)){
+                print "<h2>";
+                if ($k != 1)
+                    print ", ";
+                print ($szerzok !== null ? oci_result($szerzok, 'VEZETEKNEV') : "&nbsp;") . " " .
+                    ($szerzok !== null ? oci_result($szerzok, 'KERESZTNEV') : "&nbsp;") . "</h2>\n";
+                $k += 1;
+            }
+            print "</div></a>\n";
+            $i += 1;
+        }
+    }
+    oci_free_statement($szerzok);
+    ?>
+
+    <?php
     $i = 0;
     while (oci_fetch($mas_konyvek)) {
         if($i == 0){

@@ -40,7 +40,18 @@ $result = oci_execute($query, OCI_DEFAULT);
 if ($result) {
     oci_commit($conn);
     $i = 1;
+    $szerzok = "";
+    $hiba = 0;
     while(isset($_POST["vez-nev-{$i}"])){
+        $szerzo_check = oci_parse($conn, 'begin :r := UjSzerzo(:v, :k); end;');
+        oci_bind_by_name($szerzo_check, ':v', $_POST["vez-nev-{$i}"]);
+        oci_bind_by_name($szerzo_check, ':k', $_POST["ker-nev-{$i}"]);
+        oci_bind_by_name($szerzo_check, ':r', $r);
+        oci_execute($szerzo_check);
+        oci_free_statement($szerzo_check);
+        if($r == 0){
+            $szerzok = $szerzok . "{$_POST["vez-nev-{$i}"]} {$_POST["ker-nev-{$i}"]}, ";
+        }
         $szerzo_query = oci_parse($conn, "INSERT INTO Szerzo (isbn, keresztnev, vezeteknev) VALUES
         (:isbn, :kernev, :vnev)");
         oci_bind_by_name($szerzo_query, ":isbn", $ISBN);
@@ -51,12 +62,21 @@ if ($result) {
             oci_free_statement($szerzo_query);
             $i++;
         }else{
+            $hiba = 1;
             echo "Hiba!";
             break;
         }
     }
-    header("Location: ../ujKonyv.php?success=$result#success");
-    exit();
+    if($hiba === 0){
+        if($szerzok === ""){
+            header("Location: ../ujKonyv.php?success=$result#success");
+        }else{
+            session_start();
+            $_SESSION["szerzok"] = $szerzok;
+            header("Location: ../ujKonyv.php?warning=szerzok&success=$result#success");
+        }
+        exit();
+    }
 }
 else{
     echo "Hiba !";

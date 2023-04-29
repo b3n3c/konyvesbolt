@@ -133,8 +133,13 @@ include(__DIR__ . '/components/head.php');
             <input type="submit" value="Hozzáadás" />
             <input type="reset" value="Vissza mindent" />
             <?php if (isset($_GET["success"]) && $_GET["success"] == "1") { ?>
-                <span id="success" class='ok'>A könyv sikeresen hozzáadva!</span>
+                <span id="success" class='ok'>A könyv sikeresen hozzáadva!</span><br>
             <?php } ?>
+            <?php if (isset($_GET["warning"]) && $_GET["warning"] == "szerzok") {
+                $s = substr($_SESSION["szerzok"], 0, -3);
+                print "<br><span id='success' class='warning'>{$s} nevű szerző(k) már szerepeltek az adatbázisban.</span>";
+            } ?>
+
         </fieldset>
     </form>
     </main>

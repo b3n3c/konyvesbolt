@@ -44,11 +44,15 @@ oci_execute($login, OCI_DEFAULT);
 if(oci_fetch($login)){
     $_SESSION['email'] = $email;
     $_SESSION['id'] = oci_result($login, "FELHASZNALO_ID");
-    $_SESSION['admin'] = (oci_result($login, "ADMIN")=="Y");
-    header("Location: ../profil.php");
+    if (oci_result($login, "ADMIN") == "Y") {
+        $_SESSION['admin'] = true;
+    } else{
+        $_SESSION['admin'] = false;
+    }
+        header("Location: ../profil.php");
     echo "Sikeres bejelentkezés!";
 }else{
-    header("Location: ../bejelentkezés.php?form=login&error=UserDoesntExist&email=" . urlencode($email));
-    echo "A megadott adataok hibásak";
+    header("Location: ../bejelentkezes.php?form=login&error=UserDoesntExist&email=" . urlencode($email));
+    echo "A megadott adatok hibásak";
     exit();
 }

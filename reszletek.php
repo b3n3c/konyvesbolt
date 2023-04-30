@@ -72,9 +72,9 @@ include(__DIR__ . '/components/header.php');
 
     <?php
 
-    if (isset($_SESSION["admin"])) {
+    if (isset($_SESSION["admin"]) && $_SESSION["admin"] == "Y") {
 
-        $konyv = oci_parse ($conn, 'SELECT * FROM KONYV WHERE ISBN = :value');
+    $konyv = oci_parse ($conn, 'SELECT * FROM KONYV WHERE ISBN = :value');
         oci_bind_by_name($konyv, ':value', $_GET['isbn']);
         oci_execute($konyv, OCI_DEFAULT);
         oci_fetch($konyv);
@@ -109,6 +109,22 @@ include(__DIR__ . '/components/header.php');
         oci_close($conn);
 
 
+        ?>
+        <form method="post">
+            <input type="hidden" name="deleteBook" value="<?= $_GET["isbn"] ?>">
+            <button type="submit" onclick="return confirm('Biztosan törölni szeretnéd a könyvet?')">Könyv törlése
+            </button>
+        </form>
+        <?php
+
+        if (isset($_POST["deleteBook"])) {
+            $isbn = $_POST["deleteBook"];
+            $delete_konyv = oci_parse($conn, "DELETE FROM KONYV WHERE ISBN=:isbn");
+            oci_bind_by_name($delete_konyv, ':isbn', $isbn);
+            oci_execute($delete_konyv);
+            header('Location: konyvek.php');
+            exit();
+        }
         ?>
 
     <form method="post" action="backend/updateBook.php">
